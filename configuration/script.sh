@@ -2,6 +2,7 @@
 
 sudo yum update
 sudo yum install python3
+sudo amazon-linux-extras install nginx1.12
 
 sudo touch /etc/systemd/system/app.service
 sudo cp app.service /etc/systemd/system/app.service
