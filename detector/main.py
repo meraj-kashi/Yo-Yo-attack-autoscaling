@@ -2,6 +2,7 @@ import re
 import time
 import subprocess
 import select
+from matplotlib import scale
 import pymongo
 from pymongo import MongoClient
 import creds
@@ -15,6 +16,11 @@ db = cluster.test
 
 db = cluster["tasd"]
 collection = db["clients"]
+
+# Scale up detecion
+def top_users(n):
+    s = collection.find({"request_number":{ "$gt" : n}})
+    return s    
 
 # Initialize trusted value T for users
 Init_value = 10
@@ -38,4 +44,7 @@ while True:
             request_number_value = collection.find_one({"client_ip":client_ip[0]})['request_number'] + 1
             collection.find_one_and_update({"client_ip" : client_ip[0]} , { "$set" : { "request_number" : request_number_value  }} )
             print(request_number_value)
+    
+    top_users(10)
+
     time.sleep(1)
