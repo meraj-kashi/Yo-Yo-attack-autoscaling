@@ -5,6 +5,9 @@ resource "aws_launch_template" "image_flask_app_ec2_instance" {
   instance_type        = "t2.micro"
   key_name             = "uni"
   security_group_names = [aws_security_group.security_group_ec2_instances.name]
+  iam_instance_profile {
+    name = aws_iam_instance_profile.my_ec2_iam_profile.name
+  }
 }
 
 resource "aws_alb_target_group" "flask_app_ec2_target_group" {
