@@ -1,7 +1,7 @@
 
 resource "aws_launch_template" "image_flask_app_ec2_instance" {
   name_prefix          = "detection-"
-  image_id             = "ami-0c7854181cf1aa52a"
+  image_id             = "ami-0e1cc85a7019bbca1"
   instance_type        = "t2.micro"
   key_name             = "uni"
   security_group_names = [aws_security_group.security_group_ec2_instances.name]
