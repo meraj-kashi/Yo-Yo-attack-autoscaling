@@ -14,10 +14,11 @@ resource "aws_launch_template" "image_flask_app_ec2_instance" {
 }
 
 resource "aws_alb_target_group" "flask_app_ec2_target_group" {
-  name     = "detection-group"
-  vpc_id   = data.aws_vpc.default.id
-  protocol = "HTTP"
-  port     = 80
+  name                 = "detection-group"
+  vpc_id               = data.aws_vpc.default.id
+  protocol             = "HTTP"
+  port                 = 80
+  deregistration_delay = 60
 }
 
 resource "aws_autoscaling_group" "flask_app_autoscaling_group" {
@@ -29,9 +30,11 @@ resource "aws_autoscaling_group" "flask_app_autoscaling_group" {
   health_check_grace_period = 30
   health_check_type         = "ELB"
 
+  #enabled_metrics = ["GroupInServiceInstances"]
+
   desired_capacity = 1
   force_delete     = true
-  max_size         = 2
+  max_size         = 5
   min_size         = 1
 
   launch_template {
@@ -63,7 +66,7 @@ resource "aws_cloudwatch_metric_alarm" "web_request_alarm_up" {
   namespace           = "AWS/ApplicationELB"
   period              = "60"
   statistic           = "Sum"
-  threshold           = "4000"
+  threshold           = "1000"
 
   dimensions = {
     LoadBalancer = aws_lb.flask_app_load_balancer.arn_suffix
@@ -91,7 +94,7 @@ resource "aws_cloudwatch_metric_alarm" "web_request_alarm_down" {
   namespace           = "AWS/ApplicationELB"
   period              = "60"
   statistic           = "Sum"
-  threshold           = "500"
+  threshold           = "100"
 
   dimensions = {
     LoadBalancer = aws_lb.flask_app_load_balancer.arn_suffix

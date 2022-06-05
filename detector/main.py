@@ -5,6 +5,7 @@ import select
 from pymongo import MongoClient
 import creds
 import boto3
+import action
 
 
 # Database connection
@@ -99,4 +100,9 @@ while True:
                     collection_tasd.find_one_and_update({"client_ip" : item['high_client_ip']} , { "$set" : { "request_number" : 0  }} )
                     collection_suspection.insert_one({"client_ip":item['high_client_ip'], "Trusted_value": new_trsuted_value})
                     collection_clients_scaling.delete_one({"high_client_ip":item['high_client_ip']})
+                    if new_trsuted_value < 7:
+                        action.forwarding_rule(ListenerArn, high_client_ip, SecondTargetGroup)
+                    if new_trsuted_value < 5:
+                        action.create_network_acl_entry(high_client_ip,"default",0,65535,any,"deny",1)
+
 
